@@ -27,7 +27,7 @@ class ServiceBusTopicClient:
     def receive_forever(self, on_message: Callable[[Dict[str, Any]], None]) -> None:
         assert self._subscription, "Subscription name required for receiving"
         with ServiceBusClient.from_connection_string(self._conn_str) as sb:
-            receiver = sb.get_subscription_receiver(topic_name=self._topic, subscription_name=self._subscription, max_wait_time=5)
+            receiver = sb.get_subscription_receiver(topic_name=self._topic, subscription_name=self._subscription, max_wait_time=None)
             with receiver:
                 for msg in receiver:
                     try:
