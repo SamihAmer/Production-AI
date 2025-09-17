@@ -1,0 +1,6 @@
+
+# secrets & envs
+azure-iot-weather-stock-report/.env
+azure-iot-weather-stock-report/.venv/
+**/__pycache__/
+*.pyc
