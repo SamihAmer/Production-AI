@@ -1,0 +1,16 @@
+acr: acrjhusa1.azurecr.io # Your ACR Domain name here
+
+# one pod with one container
+gateway:
+  image: gateway-service
+  tag: v1
+  port: 5000
+
+# we will make 1 pod with 3 copies of the gpuApp as containers
+
+myGPUApp: # container
+  image: my-gpu-app
+  tag: v1
+  replicas: 1
+  port: 8000
+  

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: gateway
+  template:
+    metadata:
+      labels:
+        app: gateway
+    spec:
+      # Remove tolerations section entirely
+      imagePullSecrets:
+        - name: acr-secret
+      containers:
+        - name: gateway
+          image: {{ .Values.acr }}/{{ .Values.gateway.image }}:{{ .Values.gateway.tag }}
+          imagePullPolicy: Always
+          env:
+            - name: GPU_APP_URLS
+              value: "http://gpu-app1:8000,http://gpu-app2:8000,http://gpu-app3:8000"
+          ports:
+            - containerPort: {{ .Values.gateway.port }}

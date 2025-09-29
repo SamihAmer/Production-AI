@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gpu-app1
+spec:
+  type: ClusterIP
+  selector:
+    app: gpu-app1
+  ports:
+    - protocol: TCP
+      port: {{ .Values.myGPUApp.port }}
+      targetPort: {{ .Values.myGPUApp.port }}
+      # open up 3 ports for the 3 containers in the pod internal to the cluster
+
+--- # deployment separator
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: gpu-app2
+spec:
+  type: ClusterIP
+  selector:
+    app: gpu-app2
+  ports:
+    - protocol: TCP
+      port: {{ .Values.myGPUApp.port }}
+      targetPort: {{ .Values.myGPUApp.port }}
+
+--- # deployment separator
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: gpu-app3
+spec:
+  type: ClusterIP
+  selector:
+    app: gpu-app3
+  ports:
+    - protocol: TCP
+      port: {{ .Values.myGPUApp.port }}
+      targetPort: {{ .Values.myGPUApp.port }}

@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gpu-app1
+spec:
+  replicas: {{ .Values.myGPUApp.replicas }}
+  selector:
+    matchLabels:
+      app: gpu-app1
+  template:
+    metadata:
+      labels:
+        app: gpu-app1
+    spec:
+      imagePullSecrets:
+        - name: acr-secret
+      tolerations:
+        - key: "sku"
+          operator: "Equal"
+          value: "gpu"
+          effect: "NoSchedule"
+      containers:
+        - name: gpu-app1
+          image: {{ .Values.acr }}/{{ .Values.myGPUApp.image }}:{{ .Values.myGPUApp.tag }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{ .Values.myGPUApp.port }}
+          resources: # one container will request access to the GPU, but all containers will share the GPU
+            limits:
+              nvidia.com/gpu: 1
+
+---
+# CPU ENABLED PODS
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gpu-app2
+spec:
+  replicas: {{ .Values.myGPUApp.replicas }}
+  selector:
+    matchLabels:
+      app: gpu-app2
+  template:
+    metadata:
+      labels:
+        app: gpu-app2
+    spec:
+      imagePullSecrets:
+        - name: acr-secret
+      tolerations:
+        - key: "sku"
+          operator: "Equal"
+          value: "gpu"
+          effect: "NoSchedule"
+      containers:
+        - name: gpu-app2
+          image: {{ .Values.acr }}/{{ .Values.myGPUApp.image }}:{{ .Values.myGPUApp.tag }}
+          ports:
+            - containerPort: {{ .Values.myGPUApp.port }}
+          # resources: # Enable to use GPU IF AND ONLY IF YOU ADD MORE GPU NODES
+          #   limits:
+          #     nvidia.com/gpu: 1
+
+---
+# CPU ENABLED POD
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gpu-app3
+spec:
+  replicas: {{ .Values.myGPUApp.replicas }}
+  selector:
+    matchLabels:
+      app: gpu-app3
+  template:
+    metadata:
+      labels:
+        app: gpu-app3
+    spec:
+      imagePullSecrets:
+        - name: acr-secret
+      tolerations:
+        - key: "sku"
+          operator: "Equal"
+          value: "gpu"
+          effect: "NoSchedule"
+      containers:
+        - name: gpu-app3
+          image: {{ .Values.acr }}/{{ .Values.myGPUApp.image }}:{{ .Values.myGPUApp.tag }}
+          ports:
+            - containerPort: {{ .Values.myGPUApp.port }}
+          # resources: # Enable to use GPU IF AND ONLY IF YOU ADD MORE GPU NODES
+          #   limits:
+          #     nvidia.com/gpu: 1
