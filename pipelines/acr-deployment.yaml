@@ -13,19 +13,17 @@ stages:
     displayName: 'Deploy ACR with Terraform'
     steps:
     - script: |
+        # Check if ACR exists
+        if az acr show --name acrjhusa1 --resource-group dev-jhu-sa-rg-use01 &> /dev/null; then
+          echo "ACR already exists, skipping Terraform deployment"
+          exit 0
+        fi
+        
         cd "Deploy ACR/terraform"
         terraform init
-      displayName: 'Initialize Terraform'
-    
-    - script: |
-        cd "Deploy ACR/terraform"
         terraform plan -out=tfplan
-      displayName: 'Terraform Plan'
-    
-    - script: |
-        cd "Deploy ACR/terraform"
         terraform apply -auto-approve tfplan
-      displayName: 'Terraform Apply'
+      displayName: 'Deploy ACR if not exists'
 
 - stage: Build_And_Push_Image
   displayName: 'Build and Push Docker Image'
@@ -35,10 +33,9 @@ stages:
     displayName: 'Build and Push Python Image'
     steps:
     - script: |
-        cd "Deploy ACR/terraform"
-        terraform init
-        ACR_NAME=$(terraform output -raw acr_name)
-        ACR_LOGIN_SERVER=$(terraform output -raw acr_login_server)
+        ACR_NAME="acrjhusa1"
+        ACR_LOGIN_SERVER="${ACR_NAME}.azurecr.io"
+        
         echo "ACR Name: $ACR_NAME"
         echo "ACR Login Server: $ACR_LOGIN_SERVER"
         
@@ -46,7 +43,7 @@ stages:
         az acr login --name $ACR_NAME
         
         # Build Docker image
-        cd ../app
+        cd "Deploy ACR/app"
         docker build -t python-flask-app .
         
         # Tag and push
