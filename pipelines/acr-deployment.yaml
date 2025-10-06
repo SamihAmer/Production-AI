@@ -36,28 +36,24 @@ stages:
     steps:
     - script: |
         cd "Deploy ACR/terraform"
-        export ACR_NAME=$(terraform output -raw acr_name)
-        export ACR_LOGIN_SERVER=$(terraform output -raw acr_login_server)
+        terraform init
+        ACR_NAME=$(terraform output -raw acr_name)
+        ACR_LOGIN_SERVER=$(terraform output -raw acr_login_server)
         echo "ACR Name: $ACR_NAME"
         echo "ACR Login Server: $ACR_LOGIN_SERVER"
-        echo "##vso[task.setvariable variable=ACR_NAME]$ACR_NAME"
-        echo "##vso[task.setvariable variable=ACR_LOGIN_SERVER]$ACR_LOGIN_SERVER"
-      displayName: 'Get ACR Information'
-    
-    - script: |
-        az acr login --name $(ACR_NAME)
-      displayName: 'Login to ACR'
-    
-    - script: |
-        cd "Deploy ACR/app"
+        
+        # Login to ACR
+        az acr login --name $ACR_NAME
+        
+        # Build Docker image
+        cd ../app
         docker build -t python-flask-app .
-      displayName: 'Build Docker Image'
-    
-    - script: |
-        docker tag python-flask-app $(ACR_LOGIN_SERVER)/python-flask-app:v1
-        docker push $(ACR_LOGIN_SERVER)/python-flask-app:v1
-      displayName: 'Tag and Push to ACR'
-    
-    - script: |
-        az acr repository list --name $(ACR_NAME) --output table
-      displayName: 'Verify Image in ACR'
+        
+        # Tag and push
+        docker tag python-flask-app ${ACR_LOGIN_SERVER}/python-flask-app:v1
+        docker push ${ACR_LOGIN_SERVER}/python-flask-app:v1
+        
+        # Verify
+        az acr repository list --name $ACR_NAME --output table
+        az acr repository show-tags --name $ACR_NAME --repository python-flask-app --output table
+      displayName: 'Build and Push Complete Workflow'
