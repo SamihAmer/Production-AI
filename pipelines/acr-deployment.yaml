@@ -6,14 +6,58 @@ pool:
   name: ACR-Agent-Pool
 
 stages:
-- stage: Test_Agent
-  displayName: 'Test Agent Connection'
+- stage: Deploy_Infrastructure
+  displayName: 'Deploy ACR Infrastructure'
   jobs:
-  - job: Test_Tools
-    displayName: 'Verify Tools Installation'
+  - job: Terraform_Deploy
+    displayName: 'Deploy ACR with Terraform'
     steps:
     - script: |
-        echo "Testing agent connection..."
-        terraform version
-        docker --version
-      displayName: 'Check Terraform and Docker'
+        cd "Deploy ACR/terraform"
+        terraform init
+      displayName: 'Initialize Terraform'
+    
+    - script: |
+        cd "Deploy ACR/terraform"
+        terraform plan -out=tfplan
+      displayName: 'Terraform Plan'
+    
+    - script: |
+        cd "Deploy ACR/terraform"
+        terraform apply -auto-approve tfplan
+      displayName: 'Terraform Apply'
+
+- stage: Build_And_Push_Image
+  displayName: 'Build and Push Docker Image'
+  dependsOn: Deploy_Infrastructure
+  jobs:
+  - job: Docker_Build
+    displayName: 'Build and Push Python Image'
+    steps:
+    - script: |
+        cd "Deploy ACR/terraform"
+        export ACR_NAME=$(terraform output -raw acr_name)
+        export ACR_LOGIN_SERVER=$(terraform output -raw acr_login_server)
+        echo "ACR Name: $ACR_NAME"
+        echo "ACR Login Server: $ACR_LOGIN_SERVER"
+        echo "##vso[task.setvariable variable=ACR_NAME]$ACR_NAME"
+        echo "##vso[task.setvariable variable=ACR_LOGIN_SERVER]$ACR_LOGIN_SERVER"
+      displayName: 'Get ACR Information'
+    
+    - script: |
+        az acr login --name $(ACR_NAME)
+      displayName: 'Login to ACR'
+    
+    - script: |
+        cd "Deploy ACR/app"
+        docker build -t python-flask-app .
+      displayName: 'Build Docker Image'
+    
+    - script: |
+        docker tag python-flask-app $(ACR_LOGIN_SERVER)/python-flask-app:v1
+        docker push $(ACR_LOGIN_SERVER)/python-flask-app:v1
+      displayName: 'Tag and Push to ACR'
+    
+    - script: |
+        az acr repository list --name $(ACR_NAME) --output table
+      displayName: 'Verify Image in ACR'
