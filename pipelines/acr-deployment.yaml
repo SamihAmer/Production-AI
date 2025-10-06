@@ -1,0 +1,19 @@
+name: ACR_Deployment_Pipeline
+
+trigger: none
+
+pool:
+  name: ACR-Agent-Pool
+
+stages:
+- stage: Test_Agent
+  displayName: 'Test Agent Connection'
+  jobs:
+  - job: Test_Tools
+    displayName: 'Verify Tools Installation'
+    steps:
+    - script: |
+        echo "Testing agent connection..."
+        terraform version
+        docker --version
+      displayName: 'Check Terraform and Docker'
