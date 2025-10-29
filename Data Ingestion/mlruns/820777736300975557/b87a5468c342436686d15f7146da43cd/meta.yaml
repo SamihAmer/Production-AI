@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/samihamer/Production-AI-fresh/Data%20Ingestion/mlruns/820777736300975557/b87a5468c342436686d15f7146da43cd/artifacts
+end_time: 1761703129245
+entry_point_name: ''
+experiment_id: '820777736300975557'
+lifecycle_stage: active
+run_id: b87a5468c342436686d15f7146da43cd
+run_name: victorious-gull-392
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1761703129221
+status: 3
+tags: []
+user_id: samihamer
