@@ -1,0 +1,14 @@
+artifact_uri: mlflow-artifacts:/752875360409693672/dbf42161e0bd4f8da8294e405045b2c9/artifacts
+end_time: 1761949206240
+entry_point_name: ''
+experiment_id: '752875360409693672'
+lifecycle_stage: active
+run_id: dbf42161e0bd4f8da8294e405045b2c9
+run_name: Stock_Data_Pipeline_20251031_221959
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1761949200032
+status: 3
+tags: []
+user_id: SamihAmer

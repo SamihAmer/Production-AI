@@ -1,0 +1,15 @@
+Stock Market Dataset Information
+    =====================================
+    Total Records: 50349
+    Total Features: 18
+    Date Range: 2010-01-04 to 2202-12-27
+    Unique Stocks: 5
+    Stocks: AAPL, AMZN, GOOG, MSFT, TSLA
+    
+    Features:
+    Stock, Date, Open, High, Low, Close, Volume, SMA_10, RSI, MACD, Bollinger_Upper, Bollinger_Lower, GDP_Growth, Inflation_Rate, Interest_Rate, Sentiment_Score, Next_Close, Target
+    
+    Target Distribution:
+    Down (0): 25075 (49.80%)
+    Up (1): 25274 (50.20%)
+    

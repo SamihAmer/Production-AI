@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/samihamer/Production-AI-fresh/Data%20Ingestion/mlruns/0/2bb473f1224f48d88beb9d81a7dbee4a/artifacts
+end_time: 1761947882522
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 2bb473f1224f48d88beb9d81a7dbee4a
+run_name: Stock_Data_Pipeline_20251031_215757
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1761947878003
+status: 4
+tags: []
+user_id: SamihAmer
